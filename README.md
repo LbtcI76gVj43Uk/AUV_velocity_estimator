@@ -6,14 +6,28 @@ Lorem Ipsum
 
 ```text
 .
-├── ros2_network_interfaces/   # Custom ROS 2 message/service definitions
-├── velocity_estimator/        # Python package for CV and estimation
-│   ├── velocity_estimator/
-│   │   └── camera_publisher.py # Main camera streaming node
-│   └── package.xml            # Dependencies (cv_bridge, sensor_msgs)
-├── Dockerfile                 # Multi-stage ROS 2 Humble build
-├── ros_entrypoint.sh          # Environment sourcing and LF-fix script
-└── README.md
+├── Dockerfile
+├── README.md
+├── ros2_network_interfaces
+│   ├── CMakeLists.txt
+│   ├── include
+│   │   └── ros2_network_interfaces
+│   ├── package.xml
+│   └── src
+├── ros_entrypoint.sh
+└── velocity_estimator
+    ├── package.xml
+    ├── resource
+    │   └── velocity_estimator
+    ├── setup.cfg
+    ├── setup.py
+    ├── test
+    │   ├── test_copyright.py
+    │   ├── test_flake8.py
+    │   └── test_pep257.py
+    └── velocity_estimator
+        ├── __init__.py
+        └── camera_publisher.py
 
 ```
 
@@ -34,8 +48,8 @@ To make your USB camera visible to the Linux kernel inside WSL/Docker, run **Pow
 # 1. Identify the BusID of your camera
 usbipd list
 
-# 2. Attach the device to WSL (replace 2-3 with your BusID)
-usbipd attach --wsl --busid 2-3
+# 2. Attach the device to WSL
+usbipd attach --wsl --busid <BusID>
 
 # 3. Verify it appears in WSL
 wsl ls /dev/video*
@@ -51,7 +65,7 @@ From the root of this repository:
 docker build -t velocity_estimator .
 
 # Run the container with hardware access
-docker run -it --rm --device=/dev/video0:/dev/video0 velocity_estimator
+docker run -it --rm --device=/dev/video0:/dev/video0 velocity_estimator ros2 run velocity_estimator camera_node --ros-args -p frequency:=10.0 -p video_index:=0
 
 ```
 
