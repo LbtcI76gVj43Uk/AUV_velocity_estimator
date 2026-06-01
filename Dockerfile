@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y \
 
 # Create and set the workspace
 WORKDIR /auv_ws
-COPY . ./src
+COPY ./ros2_network_interfaces ./src/ros2_network_interfaces
+COPY ./velocity_estimator ./src/velocity_estimator
 
 # Install ROS dependencies using rosdep
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
