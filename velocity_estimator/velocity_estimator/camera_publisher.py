@@ -27,11 +27,12 @@ class CameraPublisher(Node):
         self.bridge = CvBridge()
 
     def timer_callback(self):
+        self.get_logger().info('Publishing video frame')
         ret, frame = self.cap.read()
         if ret:
             msg = self.bridge.cv2_to_imgmsg(frame, encoding="bgr8")
+            msg.header.stamp = self.get_clock().now().to_msg()
             self.publisher_.publish(msg)
-            self.get_logger().info('Publishing video frame')
         else:
             self.get_logger().warn('Failed to capture frame', once=True)
 

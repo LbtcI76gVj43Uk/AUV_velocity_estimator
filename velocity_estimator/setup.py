@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'camera_node = velocity_estimator.camera_publisher:main',
+            'estimator_node = velocity_estimator.estimator_pipeline:main',
         ],
     },
 )
