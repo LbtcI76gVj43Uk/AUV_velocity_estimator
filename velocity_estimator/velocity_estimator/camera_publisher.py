@@ -23,11 +23,16 @@ class CameraPublisher(Node):
         timer_period = 1.0 / frequency 
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.cap = cv2.VideoCapture(video_index)
+        self.cap = cv2.VideoCapture(video_index, cv2.CAP_V4L2)
         self.bridge = CvBridge()
+        
+        if not self.cap.isOpened():
+            self.get_logger().error(f'Could not open video device at index {video_index}')
+            return
+        
+        self.get_logger().info('Publishing video frame')
 
     def timer_callback(self):
-        self.get_logger().info('Publishing video frame')
         ret, frame = self.cap.read()
         if ret:
             msg = self.bridge.cv2_to_imgmsg(frame, encoding="bgr8")

@@ -36,4 +36,4 @@ COPY ./ros_entrypoint.sh /
 RUN sed -i 's/\r$//' /ros_entrypoint.sh && chmod +x /ros_entrypoint.sh
 ENTRYPOINT ["/ros_entrypoint.sh"]
 
-CMD ["ros2", "run", "velocity_estimator", "camera_node"]
+CMD ["ros2", "launch", "velocity_estimator", "velocity_estimator_launch.py"]

@@ -65,7 +65,7 @@ From the root of this repository:
 docker build -t velocity_estimator .
 
 # Run the container with hardware access
-docker run -it --rm --name cam_pub --device=/dev/video0:/dev/video0 velocity_estimator ros2 run velocity_estimator camera_node --ros-args -p frequency:=10.0 -p video_index:=0
+docker run -it --rm --device=/dev/video0:/dev/video0 velocity_estimator ros2 launch velocity_estimator velocity_estimator_launch.py freq:=5.0 video_index:=0
 
 ```
 
@@ -97,5 +97,3 @@ ros2 run velocity_estimator camera_node
 
 * **Frequency:** Defaults to 30Hz (configurable in `camera_publisher.py`).
 * **Device Index:** Defaults to `0` (matches `/dev/video0`).
-
----
