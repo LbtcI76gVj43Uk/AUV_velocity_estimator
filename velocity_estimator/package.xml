@@ -9,8 +9,7 @@
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
-  <depend>cv_bridge</depend>
-  <depend>opencv2</depend>
+  <depend>vision_opencv</depend>
   <depend>ros2_network_interfaces</depend>
 
   <test_depend>ament_copyright</test_depend>

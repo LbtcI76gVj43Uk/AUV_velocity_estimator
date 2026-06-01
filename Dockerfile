@@ -33,7 +33,7 @@ RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
 
 # Setup the entrypoint
 COPY ./ros_entrypoint.sh /
-RUN chmod +x /ros_entrypoint.sh
+RUN sed -i 's/\r$//' /ros_entrypoint.sh && chmod +x /ros_entrypoint.sh
 ENTRYPOINT ["/ros_entrypoint.sh"]
 
 CMD ["ros2", "run", "velocity_estimator", "camera_node"]
