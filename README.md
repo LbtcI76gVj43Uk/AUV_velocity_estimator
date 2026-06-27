@@ -9,25 +9,33 @@ Lorem Ipsum
 ├── Dockerfile
 ├── README.md
 ├── ros2_network_interfaces
-│   ├── CMakeLists.txt
-│   ├── include
-│   │   └── ros2_network_interfaces
-│   ├── package.xml
-│   └── src
+│   ├── CMakeLists.txt
+│   ├── include
+│   │   └── ros2_network_interfaces
+│   ├── package.xml
+│   └── src
 ├── ros_entrypoint.sh
 └── velocity_estimator
+    ├── launch
+    │   └── velocity_estimator_launch.py
     ├── package.xml
     ├── resource
-    │   └── velocity_estimator
+    │   └── velocity_estimator
     ├── setup.cfg
     ├── setup.py
     ├── test
-    │   ├── test_copyright.py
-    │   ├── test_flake8.py
-    │   └── test_pep257.py
+    │   ├── test_copyright.py
+    │   ├── test_flake8.py
+    │   └── test_pep257.py
     └── velocity_estimator
         ├── __init__.py
-        └── camera_publisher.py
+        ├── __pycache__
+        │   ├── __init__.cpython-310.pyc
+        │   ├── camera_publisher.cpython-310.pyc
+        │   └── estimator_pipeline.cpython-310.pyc
+        ├── camera_publisher.py
+        ├── estimator_pipeline.py
+        └── logger.py
 
 ```
 
@@ -91,7 +99,7 @@ ros2 run velocity_estimator camera_node
 
 | Topic | Type | Description |
 | --- | --- | --- |
-| `/camera/image_raw` | `sensor_msgs/msg/Image` | Raw BGR8 camera stream |
+| `/camera_feed/image_raw` | `sensor_msgs/msg/Image` | Raw BGR8 camera stream |
 
 ### Node Parameters
 

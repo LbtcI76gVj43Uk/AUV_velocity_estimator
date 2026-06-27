@@ -17,7 +17,7 @@ class CameraPublisher(Node):
 
         self.get_logger().info(f'Starting camera node with index: {video_index} at {frequency}Hz')
 
-        self.publisher_ = self.create_publisher(Image, 'camera/image_raw', 10)
+        self.publisher_ = self.create_publisher(Image, 'camera_feed/image_raw', 10)
         
         # Capture frequency in Hz
         timer_period = 1.0 / frequency 
