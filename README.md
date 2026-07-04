@@ -70,10 +70,10 @@ From the root of this repository:
 
 ```bash
 # Build the image
-docker build -t velocity_estimator .
+podman build -t velocity_estimator .
 
 # Run the container with hardware access
-docker run -it --rm --device=/dev/video0:/dev/video0 velocity_estimator ros2 launch velocity_estimator velocity_estimator_launch.py freq:=5.0 video_index:=0
+podman run -it --rm   --device nvidia.com/gpu=all   --device=/dev/video0:/dev/video0   --device=/dev/video1:/dev/video1   --device=/dev/video2:/dev/video2   -v <path/to/models>:/auv_ws/install/velocity_estimator/share/velocity_estimator/models:Z   --group-add=keep-groups   --security-opt label=disable   velocity_estimator ros2 launch velocity_estimator velocity_estimator_launch.py freq:=5.0 video_index:=1
 
 ```
 
@@ -89,6 +89,7 @@ colcon build --symlink-install
 source install/setup.bash
 ros2 run velocity_estimator camera_node
 
+ros2 topic echo /velocity_estimation/result
 ```
 
 ---

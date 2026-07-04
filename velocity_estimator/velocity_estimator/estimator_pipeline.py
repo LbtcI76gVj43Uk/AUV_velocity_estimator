@@ -3,6 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Vector3Stamped
 from cv_bridge import CvBridge
+import velocity_estimator
 from ament_index_python.packages import get_package_share_directory
 
 import os
@@ -59,7 +60,10 @@ class VelocityEstimator(Node):
         self.cnn.load_state_dict(state_dict)
         self.cnn = self.cnn.to(self.device).eval()
 
-        self.get_logger().info('Loading RAFT...')
+        print("Loading RAFT...")
+        raft_core_path = os.path.join(os.path.dirname(velocity_estimator.__file__), 'RAFT', 'core')
+        sys.path.append(raft_core_path)
+
         from velocity_estimator.RAFT.core.raft import RAFT
         
         raft_args = argparse.Namespace(small=False, mixed_precision=False, alternate_corr=False)
@@ -97,7 +101,7 @@ class VelocityEstimator(Node):
         image1, image2 = padder.pad(image1, image2)
 
         with torch.no_grad():
-            _, flow_up = self.raft(image1, image2, iters=20, test_mode=True)
+            _, flow_up = self.raft(image1, image2, iters=6, test_mode=True)
 
         flow_up = padder.unpad(flow_up)
         flow = flow_up[0].permute(1,2,0).cpu().numpy()
@@ -110,7 +114,8 @@ class VelocityEstimator(Node):
         return cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
 
     def preprocess(self, frame_rgb, flow_rgb):
-        class_map = predict_class_map(frame_rgb)
+        small_frame = cv2.resize(frame_rgb, (220, 110), interpolation=cv2.INTER_LINEAR)
+        class_map = predict_class_map(small_frame)
         mask = get_dynamic_mask(class_map)
         fh, fw = flow_rgb.shape[:2]
         if mask.shape != (fh, fw):
