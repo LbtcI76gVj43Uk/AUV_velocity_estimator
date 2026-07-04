@@ -3,6 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Vector3Stamped
 from cv_bridge import CvBridge
+import velocity_estimator
 from ament_index_python.packages import get_package_share_directory
 
 import os
@@ -59,7 +60,10 @@ class VelocityEstimator(Node):
         self.cnn.load_state_dict(state_dict)
         self.cnn = self.cnn.to(self.device).eval()
 
-        self.get_logger().info('Loading RAFT...')
+        print("Loading RAFT...")
+        raft_core_path = os.path.join(os.path.dirname(velocity_estimator.__file__), 'RAFT', 'core')
+        sys.path.append(raft_core_path)
+
         from velocity_estimator.RAFT.core.raft import RAFT
         
         raft_args = argparse.Namespace(small=False, mixed_precision=False, alternate_corr=False)
