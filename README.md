@@ -89,6 +89,7 @@ colcon build --symlink-install
 source install/setup.bash
 ros2 run velocity_estimator camera_node
 
+ros2 topic echo /velocity_estimation/result
 ```
 
 ---
