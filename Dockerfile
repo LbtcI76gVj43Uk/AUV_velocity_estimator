@@ -16,15 +16,16 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install CPU version of PyTorch 
-#RUN pip3 install --no-cache-dir \
-#    torch --index-url https://download.pytorch.org/whl/cpu \
-#    transformers
-
-# Install GPU version of PyTorch
 RUN pip3 install --no-cache-dir --upgrade \
-    torch torchvision --extra-index-url https://download.pytorch.org/whl/cu121 \
+    torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu \
     transformers \
     Pillow
+
+# Install GPU version of PyTorch
+#RUN pip3 install --no-cache-dir --upgrade \
+#    torch torchvision --extra-index-url https://download.pytorch.org/whl/cu121 \
+#    transformers \
+#    Pillow
 
 # Create and set the workspace
 WORKDIR /auv_ws
