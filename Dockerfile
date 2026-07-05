@@ -1,5 +1,5 @@
-# Use the official ROS 2 Humble base image
-FROM osrf/ros:humble-desktop
+# Use the official ROS 2 Humble base image (with explicit registry for Podman)
+FROM docker.io/osrf/ros:humble-desktop
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -15,21 +15,17 @@ RUN apt-get update && apt-get install -y \
     python3-opencv \
     && rm -rf /var/lib/apt/lists/*
 
-# Install CPU version of PyTorch 
+# Dynamic build for PyTorch (default cpu)
+ARG PYTORCH_WHL=cpu
+
+# Install PyTorch, Transformers and dependencies
 RUN pip3 install --no-cache-dir --upgrade \
-    torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu \
+    torch torchvision --extra-index-url https://download.pytorch.org/whl/${PYTORCH_WHL} \
     transformers \
     Pillow
 
-# Install GPU version of PyTorch
-#RUN pip3 install --no-cache-dir --upgrade \
-#    torch torchvision --extra-index-url https://download.pytorch.org/whl/cu121 \
-#    transformers \
-#    Pillow
-
 # Create and set the workspace
 WORKDIR /auv_ws
-COPY ./ros2_network_interfaces ./src/ros2_network_interfaces
 COPY ./velocity_estimator ./src/velocity_estimator
 
 # Install ROS dependencies using rosdep
