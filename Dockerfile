@@ -22,7 +22,9 @@ ARG PYTORCH_WHL=cpu
 RUN pip3 install --no-cache-dir --upgrade \
     torch torchvision --extra-index-url https://download.pytorch.org/whl/${PYTORCH_WHL} \
     transformers \
-    Pillow
+    efficientnet-pytorch \
+    Pillow \
+    setuptools==58.2.0
 
 # Create and set the workspace
 WORKDIR /auv_ws

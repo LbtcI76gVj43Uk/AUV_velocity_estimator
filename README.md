@@ -64,7 +64,7 @@ Go to WSL and verify camera availability and accessibility
 
 ```bash
 # Verify it appears in WSL
-ls /dev/video
+ls /dev/video*
 
 # Set rights for device (adjust index)
 sudo chmod 666 /dev/video0
@@ -133,3 +133,10 @@ ros2 topic echo /velocity_estimation/result
 * **Frequency:** Defaults to 30Hz (configurable in `camera_publisher.py`).
 * **Device Index:** Defaults to `0` (matches `/dev/video0`).
 * **Logging Node:** Defaults to `false`.
+
+
+```bash
+podman build --cgroup-manager=cgroupfs --build-arg PYTORCH_WHL=cpu -t velocity_estimator_images .
+
+podman run -it --rm   -v ~/auv_ws/images/frames/:/auv_ws/src/velocity_estimator/test_images:Z   -v ~/auv_ws/models/:/auv_ws/install/velocity_estimator/share/velocity_estimator/models:Z   velocity_estimator_images:latest ros2 launch velocity_estimator velocity_estimator_launch.py freq:=5.0 image_folder:=/auv_ws/src/velocity_estimator/test_images
+```

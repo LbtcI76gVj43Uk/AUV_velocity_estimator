@@ -7,6 +7,7 @@ from launch.conditions import IfCondition
 def generate_launch_description():
     
     video_index_arg = DeclareLaunchArgument('video_index', default_value='0')
+    image_folder_arg = DeclareLaunchArgument('image_folder', default_value='/auv_ws/src/velocity_estimator/test_images')
     freq_arg = DeclareLaunchArgument('freq', default_value='10.0')
     run_logger_arg = DeclareLaunchArgument(
         'run_logger', 
@@ -24,7 +25,7 @@ def generate_launch_description():
             executable='camera_node',
             name='camera_publisher',
             parameters=[{
-                'video_index': LaunchConfiguration('video_index'),
+                'image_folder': LaunchConfiguration('image_folder'),
                 'frequency': LaunchConfiguration('freq')
             }]
         ),
