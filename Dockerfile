@@ -19,8 +19,10 @@ RUN apt-get update && apt-get install -y \
 ARG PYTORCH_WHL=cpu
 
 # Install PyTorch, Transformers and dependencies
+RUN pip3 install --no-cache-dir torch torchvision \
+    --index-url https://download.pytorch.org/whl/${PYTORCH_WHL}
+
 RUN pip3 install --no-cache-dir --upgrade \
-    torch torchvision --extra-index-url https://download.pytorch.org/whl/${PYTORCH_WHL} \
     transformers \
     efficientnet-pytorch \
     Pillow \

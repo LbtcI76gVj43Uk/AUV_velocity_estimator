@@ -13,7 +13,7 @@ class CameraPublisher(Node):
         # default parameter values
         # Wir deklarieren einen Bild-Pfad anstelle des Video-Index
         self.declare_parameter('image_folder', '/auv_ws/src/velocity_estimator/test_images')
-        self.declare_parameter('frequency', 30.0)
+        self.declare_parameter('frequency', 10.0)
 
         self.image_folder = self.get_parameter('image_folder').get_parameter_value().string_value
         frequency = self.get_parameter('frequency').get_parameter_value().double_value
@@ -61,7 +61,18 @@ class CameraPublisher(Node):
             self.get_logger().warn(f'Failed to load image: {img_path}')
 
         # 4. Index hochzählen (und am Ende wieder von vorne anfangen -> Loop)
-        self.current_image_index = (self.current_image_index + 1) % len(self.image_paths)
+        self.current_image_index += 1
+        
+        if self.current_image_index >= len(self.image_paths):
+            self.get_logger().info('All images streamed successfully. Shutting down camera node...')
+            
+            # Timer stoppen und Node zerstören
+            self.timer.cancel()
+            self.destroy_node()
+            
+            # System-Exit aufrufen, um den Prozess im Container sauber zu beenden
+            import sys
+            sys.exit(0)
 
 
 def main(args=None):

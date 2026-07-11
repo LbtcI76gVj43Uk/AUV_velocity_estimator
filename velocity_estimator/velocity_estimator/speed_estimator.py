@@ -56,7 +56,7 @@ def load_efficientnet_flow_speed(model_path: str, device: str = "cpu") -> "Effic
         state_dict = checkpoint
 
     model = EfficientNetFlowSpeed(variant=variant)
-    model.load_state_dict(state_dict, strict=False)
+    model.load_state_dict(state_dict)
     return model.to(device).eval()
 
 

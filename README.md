@@ -106,7 +106,7 @@ ros2 run velocity_estimator camera_node
 podman run -it --rm --privileged -e OPENCV_VIDEOIO_PRIORITY_BACKEND=V4L2 --device=/dev/video0:/dev/video0 -v <path/to/models>:/auv_ws/install/velocity_estimator/share/velocity_estimator/models:Z --group-add=keep-groups --security-opt label=disable velocity_estimator ros2 launch velocity_estimator velocity_estimator_launch.py freq:=5.0 video_index:=0 run_logger:=true
 
 # Run the container with gpu build
-podman run -it --rm --device nvidia.com/gpu=all --device=/dev/video0:/dev/video0 --device=/dev/video1:/dev/video1 --device=/dev/video2:/dev/video2 -v <path/to/models>:/auv_ws/install/velocity_estimator/share/velocity_estimator/models:Z --group-add=keep-groups --security-opt label=disable   velocity_estimator ros2 launch velocity_estimator velocity_estimator_launch.py freq:=5.0 video_index:=1 run_logger:=true
+podman run -it --rm --device nvidia.com/gpu=all -v ~/dev/images/frames/:/auv_ws/src/velocity_estimator/test_images:Z -v ~/dev/models/:/auv_ws/install/velocity_estimator/share/velocity_estimator/models:Z --group-add=keep-groups --security-opt label=disable velocity_estimator:latest ros2 launch velocity_estimator velocity_estimator_launch.py freq:=10.0 image_folder:=/auv_ws/src/velocity_estimator/test_images
 
 ```
 
@@ -116,6 +116,7 @@ The results are published to the topic `/velocity_estimation/result` and can be 
 
 # Echo result topic
 ros2 topic echo /velocity_estimation/result
+```
 
 ---
 
@@ -133,10 +134,3 @@ ros2 topic echo /velocity_estimation/result
 * **Frequency:** Defaults to 30Hz (configurable in `camera_publisher.py`).
 * **Device Index:** Defaults to `0` (matches `/dev/video0`).
 * **Logging Node:** Defaults to `false`.
-
-
-```bash
-podman build --cgroup-manager=cgroupfs --build-arg PYTORCH_WHL=cpu -t velocity_estimator_images .
-
-podman run -it --rm   -v ~/auv_ws/images/frames/:/auv_ws/src/velocity_estimator/test_images:Z   -v ~/auv_ws/models/:/auv_ws/install/velocity_estimator/share/velocity_estimator/models:Z   velocity_estimator_images:latest ros2 launch velocity_estimator velocity_estimator_launch.py freq:=5.0 image_folder:=/auv_ws/src/velocity_estimator/test_images
-```
