@@ -124,7 +124,18 @@ class VelocityEstimator(Node):
 
                 # 3. Inference
                 with torch.no_grad():
-                    estimation_result = max(self.net(x).item(), 0.0)
+                    raw_estimation = self.net(x).item()
+
+                dt = current_timestamp - self.last_processed_timestamp
+                
+                if self.last_processed_timestamp != 0.0 and dt > (self.target_interval * 2):
+                    self.get_logger().warn(
+                        f'Frame delay too high ({dt:.2f}s). Skipping estimation at sequence end.'
+                    )
+                    return
+
+                # Negative Werte werden jetzt voll unterstützt!
+                estimation_result = raw_estimation
 
                 # Nachricht bauen und senden
                 out_msg = Vector3Stamped()
