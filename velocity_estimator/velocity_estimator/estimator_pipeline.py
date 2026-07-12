@@ -32,7 +32,7 @@ class VelocityEstimator(Node):
         raft_core_absolute_path = os.path.join(package_share_dir, 'RAFT', 'core')
         sys.path.insert(0, raft_core_absolute_path)
 
-        default_model_path = os.path.join(package_share_dir, 'models', 'model.pth')
+        default_model_path = os.path.join(package_share_dir, 'models', 'efficientnet.pth')
         default_raft_path = os.path.join(package_share_dir, 'models', 'raft-kitti.pth')
 
         self.declare_parameter('model_path', default_model_path)
@@ -104,14 +104,7 @@ class VelocityEstimator(Node):
 
     def listener_callback(self, msg):
         try:
-            # convert ros timestamp into seconds
             current_timestamp = msg.header.stamp.sec + (msg.header.stamp.nanosec * 1e-9)
-
-            # fps matching
-            if self.prev_img is not None:
-                time_since_last_process = current_timestamp - self.last_processed_timestamp
-                if time_since_last_process < (self.target_interval - 0.005): # 5ms tolerance
-                    return
 
             # Convert ROS image message stream to OpenCV BGR image
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
@@ -133,21 +126,23 @@ class VelocityEstimator(Node):
                 with torch.no_grad():
                     estimation_result = max(self.net(x).item(), 0.0)
 
-                # Extract the timestamp from the ROS Header
-                self.last_processed_timestamp = current_timestamp
-
-                # Construct and publish telemetry message
+                # Nachricht bauen und senden
                 out_msg = Vector3Stamped()
-                out_msg.header = msg.header # hardware timestamp from the camera frame
-                out_msg.vector.x = estimation_result # velocity value into the x channel
+                out_msg.header = msg.header 
+                out_msg.vector.x = estimation_result
 
                 self.publisher.publish(out_msg)
 
+                self.get_logger().info(
+                    f'Timestamp: {current_timestamp:.4f} | Velocity: {estimation_result:.2f} m/s, {estimation_result*3.6:.2f} km/h'
+                )
+
             else:
                 self.get_logger().info('Initializing pipeline... Waiting for second frame.')
-                self.last_processed_timestamp = current_timestamp
 
+            # WICHTIG: prev_img wird JETZT IMMER lückenlos aktualisiert
             self.prev_img = curr_img
+            self.last_processed_timestamp = current_timestamp
 
         except Exception as e:
             self.get_logger().error(f'Failed to process image: {str(e)}')

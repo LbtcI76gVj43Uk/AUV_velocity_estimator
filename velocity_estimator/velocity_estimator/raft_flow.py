@@ -143,5 +143,5 @@ class RaftFlowEstimator:
         hsv = np.zeros((flow.shape[0], flow.shape[1], 3), dtype=np.uint8)
         hsv[..., 0] = ang * 180 / np.pi / 2
         hsv[..., 1] = 255
-        hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
+        hsv[..., 2] = np.clip((mag / 20.0) * 255, 0, 255).astype(np.uint8)
         return cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
